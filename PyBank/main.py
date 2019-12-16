@@ -5,13 +5,10 @@ csvpath = os.path.join('budget_data.csv')
 file_to_output = os.path.join("budget_analysis.txt")
 
 # track totals
-months = []
 total = 0
 total_change = []
-change = 0
 total_months = 0
-total_pl = []
-monthly_change = 0
+monthly_change = []
 prev_total = 0
 increase = 0
 decrease = 0
@@ -21,28 +18,32 @@ with open(csvpath, newline='') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
     csv_header = next(csvreader)
 
-#find total months, increase and decrease, average (need to calculate total change)
+#find total months, increase and decrease, average
     for row in csvreader:
-        months.append(row[0])
-        total_pl.append(int(row[1]))
         total_months+= 1
         total = total + int(row[1])
         prev_total = int(row[1])
-        increase = int(row[1]) - prev_total
-        
+        total_change = int(row[1]) - prev_total
+        monthly_change = monthly_change + int(row[0])
 
-average_change = round(total_change/total_months)
-greatest_inc = max(total_change)
-greatest_dec = min(total_change)
+        if (total_change > increase[1]):
+            increase[0] = row[0]
+            increase[1] = total_change
+        else:
+            decrease[0] = row[0]
+            decrease = total_change
+    sum_total = sum(total_change)
+    len_total = len(total_change)
+    total_average = (sum_total / len_total)
 
 
 output = (
     f"\nFinancial Analysis\n"
     f"-----------------\n"
     f"Total Months: {total_months}\n"
-    f"Average Change: {average_change}\n"
-    f"Greatest Increase in Profits: {greatest_inc}\n"
-    f"Greatest Decrease in Profits: {greatest_dec}\n")
+    f"Average Change: {total_average}\n"
+    f"Greatest Increase in Profits: {increase}\n"
+    f"Greatest Decrease in Profits: {decrease}\n")
 
 # Print all of the results (to terminal)
 print(output)
